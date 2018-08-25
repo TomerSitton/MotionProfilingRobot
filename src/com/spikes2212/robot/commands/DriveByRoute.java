@@ -1,5 +1,8 @@
 package com.spikes2212.robot.commands;
 
+import java.util.function.Supplier;
+
+import com.spikes2212.dashboard.ConstantHandler;
 import com.spikes2212.robot.Robot;
 import com.spikes2212.utils.PIDSettings;
 
@@ -36,31 +39,11 @@ public class DriveByRoute extends Command {
 	private Timer timer;
 
 	private PIDSettings rotationPIDSettings;
-	private PIDSettings movementPIDSettings;
+	private final Supplier<Double> MOVE_VALUE = ConstantHandler.addConstantDouble("MOVE_VALUE", 0.3);
 
 	private PIDController rotationController;
-	private PIDController movementController;
 
-	private double moveValue = 0;
 	private double rotateValue = 0;
-
-	private PIDSource movementSource = new PIDSource() {
-
-		@Override
-		public void setPIDSourceType(PIDSourceType pidSource) {
-		}
-
-		@Override
-		public double pidGet() {
-			double yaw = Math.toRadians(Robot.yawSupplier.get());
-			return Utils.rotateVector(error, -yaw).getX();
-		}
-
-		@Override
-		public PIDSourceType getPIDSourceType() {
-			return PIDSourceType.kDisplacement;
-		}
-	};
 
 	private PIDSource rotationSource = new PIDSource() {
 
@@ -98,12 +81,10 @@ public class DriveByRoute extends Command {
 		timer = new Timer();
 
 		this.rotationPIDSettings = rotationSettings;
-		this.movementPIDSettings = movementSettings;
 
 		Robot.dbc.addDouble("route set point x", () -> setPoint.getX());
 		Robot.dbc.addDouble("route set point y", () -> setPoint.getY());
 
-		Robot.dbc.addDouble("route error movement", () -> movementSource.pidGet());
 		Robot.dbc.addDouble("route error rotation", () -> rotationSource.pidGet());
 	}
 
@@ -116,14 +97,7 @@ public class DriveByRoute extends Command {
 		rotationController.setSetpoint(0);
 		rotationController.setOutputRange(-0.5, 0.5);
 
-		movementController = new PIDController(movementPIDSettings.getKP(), movementPIDSettings.getKI(),
-				movementPIDSettings.getKD(), movementSource, (value) -> moveValue = value);
-		movementController.setAbsoluteTolerance(movementPIDSettings.getTolerance());
-		movementController.setSetpoint(0);
-		movementController.setOutputRange(-1, 1);
-
 		rotationController.enable();
-		movementController.enable();
 
 		timer.start();
 	}
@@ -143,7 +117,7 @@ public class DriveByRoute extends Command {
 		Point newError = difference(setPoint, Robot.position);
 		error.setXAndY(newError.getX(), newError.getY());
 
-		Robot.drivetrain.arcadeDrive(rotateValue, moveValue);
+		Robot.drivetrain.arcadeDrive(rotateValue, MOVE_VALUE.get());
 	}
 
 	@Override
@@ -157,7 +131,6 @@ public class DriveByRoute extends Command {
 		System.out.println("ended");
 		Robot.drivetrain.stop();
 		rotationController.disable();
-		movementController.disable();
 	}
 
 	@Override
