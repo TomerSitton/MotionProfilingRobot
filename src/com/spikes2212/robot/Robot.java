@@ -106,6 +106,8 @@ public class Robot extends TimedRobot {
 		dbc.addDouble("position x", position::getX);
 		dbc.addDouble("position y", position::getY);
 
+		dbc.addDouble("acceleration", imu::getAccelX);
+
 		dbc.addDouble("yaw angle", yawSupplier);
 
 		rightEncoder.reset();
