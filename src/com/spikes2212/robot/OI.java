@@ -7,6 +7,10 @@
 
 package com.spikes2212.robot;
 
+import java.util.function.Supplier;
+
+import com.spikes2212.dashboard.ConstantHandler;
+import com.spikes2212.genericsubsystems.drivetrains.commands.DriveArcade;
 import com.spikes2212.genericsubsystems.drivetrains.commands.DriveTankWithPID;
 import com.spikes2212.robot.commands.DriveByRoute;
 
@@ -21,22 +25,9 @@ import routes.utils.Position2D;
 public class OI {
 
 	private Joystick driver = new Joystick(0);
+	private static final Supplier<Double> VOLAGE = ConstantHandler.addConstantDouble("VOLTAGE", 0.1);
 
 	public OI() {
-		// JoystickButton forward = new JoystickButton(driver, 1);
-		// forward.whenPressed(new DriveArcade(Robot.drivetrain, () -> 0.0, ()
-		// -> -0.2));
-		//
-		// JoystickButton fastForward = new JoystickButton(driver, 4);
-		// fastForward.whenPressed(new DriveArcade(Robot.drivetrain, () -> 0.0,
-		// () -> -0.5));
-		//
-		// JoystickButton backward = new JoystickButton(driver, 2);
-		// backward.whenPressed(new DriveArcade(Robot.drivetrain, () -> 0.0, ()
-		// -> 0.2));
-		//
-		// JoystickButton rotate = new JoystickButton(driver, 3);
-		// rotate.whenPressed(new DriveTank(Robot.drivetrain, 0.3, -0.3));
 
 		JoystickButton routate = new JoystickButton(driver, 1);
 		routate.whenPressed(new DriveByRoute(new Position2D(150, 100, Math.PI / 2), Preferences.ROTATE_PID_SETTINGS,
@@ -45,6 +36,10 @@ public class OI {
 		JoystickButton check = new JoystickButton(driver, 2);
 		check.whenPressed(new DriveTankWithPID(Robot.drivetrain, Robot.leftEncoder, Robot.rightEncoder, 1000,
 				Preferences.MOVE_PID_SETTINGS));
+
+		JoystickButton testVoltage = new JoystickButton(driver, 3);
+		testVoltage.whenPressed(new DriveArcade(Robot.drivetrain, VOLAGE, () -> 0.0));
+
 	}
 
 	public double getForward() {
