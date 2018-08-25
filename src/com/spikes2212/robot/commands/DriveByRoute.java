@@ -120,7 +120,7 @@ public class DriveByRoute extends Command {
 				movementPIDSettings.getKD(), movementSource, (value) -> moveValue = value);
 		movementController.setAbsoluteTolerance(movementPIDSettings.getTolerance());
 		movementController.setSetpoint(0);
-		movementController.setOutputRange(-1, 1);
+		movementController.setOutputRange(0, 1);
 
 		rotationController.enable();
 		movementController.enable();
