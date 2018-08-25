@@ -13,6 +13,7 @@ import com.spikes2212.dashboard.ConstantHandler;
 import com.spikes2212.genericsubsystems.drivetrains.commands.DriveArcade;
 import com.spikes2212.genericsubsystems.drivetrains.commands.DriveTankWithPID;
 import com.spikes2212.robot.commands.DriveByRoute;
+import com.spikes2212.robot.commands.DriveByVoltage;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -25,7 +26,7 @@ import routes.utils.Position2D;
 public class OI {
 
 	private Joystick driver = new Joystick(0);
-	private static final Supplier<Double> VOLAGE = ConstantHandler.addConstantDouble("VOLTAGE", 0.1);
+	private static final Supplier<Double> DRIVING_VOLAGE = ConstantHandler.addConstantDouble("VOLTAGE", 0.1);
 
 	public OI() {
 
@@ -38,7 +39,7 @@ public class OI {
 				Preferences.MOVE_PID_SETTINGS));
 
 		JoystickButton testVoltage = new JoystickButton(driver, 3);
-		testVoltage.whenPressed(new DriveArcade(Robot.drivetrain, VOLAGE, () -> 0.0));
+		testVoltage.toggleWhenPressed(new DriveByVoltage(Robot.drivetrain, DRIVING_VOLAGE.get()));
 
 	}
 
