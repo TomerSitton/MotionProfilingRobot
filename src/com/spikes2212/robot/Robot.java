@@ -85,8 +85,8 @@ public class Robot extends TimedRobot {
 		displacement = new Point(0, 0);
 
 		position = new Position2D(0, 0, 0);
-		OdometryUnit odometryUnit = new OdometryUnit(leftEncoder::get, rightEncoder::get, ROBOT_WIDTH_INCHES,
-				yawSupplier);
+		OdometryUnit odometryUnit = new OdometryUnit(leftEncoder::getDistance, rightEncoder::getDistance,
+				ROBOT_WIDTH_INCHES, yawSupplier);
 
 		handler = new OdometryHandler(odometryUnit);
 
