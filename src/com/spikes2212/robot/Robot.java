@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.spikes2212.dashboard.DashBoardController;
 import com.spikes2212.genericsubsystems.drivetrains.TankDrivetrain;
 import com.spikes2212.genericsubsystems.drivetrains.commands.DriveArcade;
+import com.spikes2212.genericsubsystems.utils.InvertedConsumer;
 import com.spikes2212.utils.DoubleSpeedcontroller;
 
 import edu.wpi.first.wpilibj.Encoder;
@@ -72,11 +73,11 @@ public class Robot extends TimedRobot {
 		SpeedController right = new DoubleSpeedcontroller(new WPI_TalonSRX(RobotMap.CAN.DRIVE_RIGHT1),
 				new WPI_TalonSRX(RobotMap.CAN.DRIVE_RIGHT2));
 
-		drivetrain = new TankDrivetrain(left::set, right::set);
+		drivetrain = new TankDrivetrain(new InvertedConsumer(left::set), right::set);
 
 		oi = new OI();
 
-		drivetrain.setDefaultCommand(new DriveArcade(drivetrain, oi::getRotation, oi::getForward));
+		drivetrain.setDefaultCommand(new DriveArcade(drivetrain, oi::getForward, oi::getRotation));
 
 		imu.reset();
 
@@ -106,7 +107,7 @@ public class Robot extends TimedRobot {
 		dbc.addDouble("position x", position::getX);
 		dbc.addDouble("position y", position::getY);
 
-		dbc.addDouble("acceleration", imu::getAccelX);
+		dbc.addDouble("acceleration",()->- imu.getAccelX());
 
 		dbc.addDouble("yaw angle", yawSupplier);
 

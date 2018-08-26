@@ -3,7 +3,6 @@ package com.spikes2212.robot.commands;
 import com.spikes2212.genericsubsystems.drivetrains.TankDrivetrain;
 import com.spikes2212.robot.Robot;
 
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -30,7 +29,7 @@ public class DriveByVoltage extends Command {
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
 		drivetrain.arcadeDrive(drivingVoltage, 0);
-		double currentAcc = Robot.imu.getAccelX();
+		double currentAcc = -Robot.imu.getAccelX();
 		if (currentAcc > maxAcc)
 			maxAcc = currentAcc;
 	}
@@ -43,10 +42,7 @@ public class DriveByVoltage extends Command {
 	// Called once after isFinished returns true
 	protected void end() {
 		Robot.drivetrain.stop();
-		// TODO - read the voltage on the speed controller
-		PowerDistributionPanel pdp = new PowerDistributionPanel();
-		System.out.println("pdp volt: " + pdp.getVoltage());
-		System.out.println("Maximum acc measured for " + drivingVoltage * pdp.getVoltage() + "V was " + maxAcc);
+		System.out.println("Maximum acc measured for " + drivingVoltage + " was " + maxAcc);
 	}
 
 }

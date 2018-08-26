@@ -22,8 +22,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
  */
 public class OI {
 
-	private Joystick drivermovement = new Joystick(0);
-	private Joystick driverRotation = new Joystick(1);
+	private Joystick driver = new Joystick(0);
 	private static final Supplier<Double> DRIVING_VOLAGE = ConstantHandler.addConstantDouble("VOLTAGE", 0.1);
 
 	public OI() {
@@ -33,20 +32,20 @@ public class OI {
 		// / 2), Preferences.ROTATE_PID_SETTINGS,
 		// Preferences.MOVE_PID_SETTINGS));
 
-		JoystickButton check = new JoystickButton(drivermovement, 2);
+		JoystickButton check = new JoystickButton(driver, 2);
 		check.whenPressed(new DriveTankWithPID(Robot.drivetrain, Robot.leftEncoder, Robot.rightEncoder, 1000,
 				Preferences.MOVE_PID_SETTINGS));
 
-		JoystickButton testVoltage = new JoystickButton(drivermovement, 3);
+		JoystickButton testVoltage = new JoystickButton(driver, 5);
 		testVoltage.toggleWhenPressed(new DriveByVoltage(Robot.drivetrain, DRIVING_VOLAGE.get()));
 
 	}
 
 	public double getForward() {
-		return drivermovement.getY();
+		return driver.getY();
 	}
 
 	public double getRotation() {
-		return driverRotation.getX();
+		return driver.getX();
 	}
 }
