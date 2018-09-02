@@ -7,6 +7,7 @@
 
 package com.spikes2212.robot;
 
+import java.awt.geom.Point2D;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -22,7 +23,6 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import odometry.OdometryHandler;
 import orientationUtils.preferences.OdometryUnit;
 import routes.utils.Position2D;
-import utils.Point;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -52,7 +52,7 @@ public class Robot extends TimedRobot {
 
 	public static Position2D position = new Position2D(0, 0, 0);
 
-	public static Point displacement;
+	public static Point2D displacement;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -82,7 +82,7 @@ public class Robot extends TimedRobot {
 
 		yawSupplier = () -> imu.getAngleY();
 
-		displacement = new Point(0, 0);
+		displacement = new Point2D.Double(0, 0);
 
 		position = new Position2D(0, 0, 0);
 		OdometryUnit odometryUnit = new OdometryUnit(leftEncoder::getDistance, rightEncoder::getDistance,
@@ -167,7 +167,7 @@ public class Robot extends TimedRobot {
 		rightEncoder.reset();
 		leftEncoder.reset();
 
-		position.setXAndY(0, 0);
+		position.setLocation(0, 0);
 	}
 
 	/**
@@ -175,8 +175,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		Point newDisplacement = handler.getDifference();
-		displacement.setXAndY(newDisplacement.getX(), newDisplacement.getY());
+		Point2D newDisplacement = handler.getDifference();
+		displacement.setLocation(newDisplacement.getX(), newDisplacement.getY());
 
 		position.move(displacement.getX(), displacement.getY());
 		position.setAngle(imu.getAngleY());
