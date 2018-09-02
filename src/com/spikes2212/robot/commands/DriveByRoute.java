@@ -1,5 +1,7 @@
 package com.spikes2212.robot.commands;
 
+import java.awt.geom.Point2D;
+
 import com.spikes2212.robot.Robot;
 import com.spikes2212.utils.PIDSettings;
 
@@ -16,7 +18,6 @@ import routes.synchronizing.RouteSynchronizer;
 import routes.synchronizing.SpeedProviderFactory;
 import routes.utils.Position2D;
 import routes.utils.RoutePointInfo;
-import utils.Point;
 import utils.Utils;
 
 /**
@@ -29,9 +30,9 @@ public class DriveByRoute extends Command {
 
 	private RouteSynchronizer sync;
 
-	private final Point destination;
-	private Point setPoint;
-	private Point error = new Point(0, 0);
+	private final Point2D destination;
+	private Point2D setPoint;
+	private Point2D error = new Point2D.Double(0, 0);
 
 	private Timer timer;
 
@@ -85,7 +86,7 @@ public class DriveByRoute extends Command {
 		requires(Robot.drivetrain);
 		this.destination = destination;
 
-		setPoint = new Point(0, 0);
+		setPoint = new Point2D.Double(0, 0);
 
 		RouteFunctionsProvider desc = new SplineFunctionsProvider(Robot.position, destination, K);
 
@@ -128,20 +129,20 @@ public class DriveByRoute extends Command {
 		timer.start();
 	}
 
-	private Point difference(Point p1, Point p2) {
+	private Point2D difference(Point2D p1, Point2D p2) {
 		double x = p1.getX() - p2.getX();
 		double y = p1.getY() - p2.getY();
 
-		return new Point(x, y);
+		return new Point2D.Double(x, y);
 	}
 
 	@Override
 	protected void execute() {
-		Point newSetPoint = sync.getPosition(timer.get());
-		setPoint.setXAndY(newSetPoint.getX(), newSetPoint.getY());
+		Point2D newSetPoint = sync.getPosition(timer.get());
+		setPoint.setLocation(newSetPoint.getX(), newSetPoint.getY());
 		System.out.println(setPoint);
-		Point newError = difference(setPoint, Robot.position);
-		error.setXAndY(newError.getX(), newError.getY());
+		Point2D newError = difference(setPoint, Robot.position);
+		error.setLocation(newError.getX(), newError.getY());
 
 		Robot.drivetrain.arcadeDrive(rotateValue, moveValue);
 	}
@@ -149,7 +150,7 @@ public class DriveByRoute extends Command {
 	@Override
 
 	protected boolean isFinished() {
-		return Point.distance(Robot.position, destination) < 1;
+		return Robot.position.distance(destination) < 1;
 	}
 
 	@Override
