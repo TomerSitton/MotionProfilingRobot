@@ -1,5 +1,7 @@
 package com.spikes2212.robot.commands;
 
+import java.awt.geom.Point2D;
+
 import com.spikes2212.robot.Robot;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -12,7 +14,6 @@ import routes.synchronizing.RouteSynchronizer;
 import routes.synchronizing.SpeedProviderFactory;
 import routes.utils.Position2D;
 import routes.utils.RoutePointInfo;
-import utils.Point;
 
 /**
  *
@@ -23,9 +24,9 @@ public class SimplifiedDriveByRoute extends Command {
 
 	private RouteSynchronizer sync;
 
-	private final Point destination;
-	private Point setPoint;
-	private Point error;
+	private final Point2D destination;
+	private Point2D setPoint;
+	private Point2D error;
 
 	private Timer timer;
 
@@ -33,7 +34,7 @@ public class SimplifiedDriveByRoute extends Command {
 
 		this.destination = destination;
 
-		setPoint = new Point(0, 0);
+		setPoint = new Point2D.Double(0, 0);
 
 		RouteFunctionsProvider desc = new SplineFunctionsProvider(Robot.position, destination, K);
 
@@ -54,18 +55,18 @@ public class SimplifiedDriveByRoute extends Command {
 		timer.start();
 	}
 
-	private Point difference(Point p1, Point p2) {
+	private Point2D difference(Point2D p1, Point2D p2) {
 		double x = p1.getX() - p2.getX();
 		double y = p1.getY() - p2.getY();
 
-		return new Point(x, y);
+		return new Point2D.Double(x, y);
 	}
 
 	@Override
 	protected void execute() {
 
-		Point newSetPoint = sync.getPosition(timer.get());
-		setPoint.setXAndY(newSetPoint.getX(), newSetPoint.getY());
+		Point2D newSetPoint = sync.getPosition(timer.get());
+		setPoint.setLocation(newSetPoint.getX(), newSetPoint.getY());
 
 		error = difference(setPoint, Robot.position);
 
@@ -73,7 +74,7 @@ public class SimplifiedDriveByRoute extends Command {
 
 	@Override
 	protected boolean isFinished() {
-		return Point.distance(Robot.position, destination) < 1;
+		return Robot.position.distance(destination) < 1;
 	}
 
 	@Override
