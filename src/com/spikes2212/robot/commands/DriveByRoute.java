@@ -88,9 +88,9 @@ public class DriveByRoute extends Command {
 
 		setPoint = new Point2D.Double(0, 0);
 
-		RouteFunctionsProvider desc = new SplineFunctionsProvider(Robot.position, destination, K);
+		RouteFunctionsProvider functionProvider = new SplineFunctionsProvider(Robot.position, destination, K);
 
-		RouteDataProvider routeProvider = new RouteDataProvider(desc);
+		RouteDataProvider routeProvider = new RouteDataProvider(functionProvider);
 		RoutePointInfo[] routeInfo = routeProvider.getRouteData(NUM_POINTS);
 
 		SpeedProviderFactory factory = new MaxSpeedsFactory(Robot.ROBOT_WIDTH_INCHES, 100, 50);
