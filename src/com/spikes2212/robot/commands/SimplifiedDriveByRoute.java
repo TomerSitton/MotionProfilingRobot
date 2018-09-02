@@ -7,7 +7,7 @@ import com.spikes2212.robot.Robot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import routes.routes.RouteFunctionsProvider;
-import routes.routes.RouteProvider;
+import routes.routes.RouteDataProvider;
 import routes.routes.SplineFunctionsProvider;
 import routes.synchronizing.MaxSpeedsFactory;
 import routes.synchronizing.RouteSynchronizer;
@@ -38,8 +38,8 @@ public class SimplifiedDriveByRoute extends Command {
 
 		RouteFunctionsProvider desc = new SplineFunctionsProvider(Robot.position, destination, K);
 
-		RouteProvider routeProvider = new RouteProvider(desc);
-		RoutePointInfo[] routeInfo = routeProvider.getRoute(NUM_POINTS);
+		RouteDataProvider routeProvider = new RouteDataProvider(desc);
+		RoutePointInfo[] routeInfo = routeProvider.getRouteData(NUM_POINTS);
 
 		SpeedProviderFactory factory = new MaxSpeedsFactory(Robot.ROBOT_WIDTH_INCHES, 1, 1);
 		sync = new RouteSynchronizer(factory, routeInfo);
@@ -65,7 +65,7 @@ public class SimplifiedDriveByRoute extends Command {
 	@Override
 	protected void execute() {
 
-		Point2D newSetPoint = sync.getPosition(timer.get());
+		Point2D newSetPoint = sync.getPositionByTime(timer.get());
 		setPoint.setLocation(newSetPoint.getX(), newSetPoint.getY());
 
 		error = difference(setPoint, Robot.position);
